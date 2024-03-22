@@ -18,6 +18,7 @@ const config: Config = {
             },
         },
     },
+    safelist: ['bg-roubit-point-color', 'text-white', 'bg-white', 'text-[#55AB7B]', 'border-[#55AB7B]-500'],
     plugins: [],
 };
 export default config;
