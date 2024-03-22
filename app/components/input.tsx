@@ -13,7 +13,8 @@ const Input: React.FC<InputProps> = ({ type, placeholder, register }) => {
         <input
             type={type}
             placeholder={placeholder}
-            className="border rounded-xl p-2 text-black w-[327px] h-[52px]"
+            className={`border rounded-xl p-2 text-black w-[327px] h-[52px] outline-2 focus:outline-[#55AB7B]`}
+            autoComplete="off"
             {...register}
         />
     );

@@ -12,7 +12,7 @@ const Button: React.FC<ButtonProps> = ({ type, bgcolor, color, text }) => {
         <button
             type={type}
             className={`bg-${bgcolor} text-${color}
-             py-2 px-4 rounded-xl border-2 w-[327px]  shadow-sm cursor-pointer focus:border-#55AB7B-500`}
+             py-2 px-4 rounded-xl border-2 w-[327px]  shadow-sm cursor-pointer `}
         >
             {text}
         </button>
