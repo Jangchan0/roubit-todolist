@@ -14,18 +14,18 @@ function* login(action) {
 function* logout() {
     try {
         const response = yield call(fetchData, 'post', '/logout');
-        yield put({ type: LOGOUT_SUCCESS, payload: response.data });
+        yield put({ type: types.LOGOUT_SUCCESS, payload: response.data });
     } catch (error) {
-        yield put({ type: LOGOUT_FAILURE, payload: error });
+        yield put({ type: types.LOGOUT_FAILURE, payload: error });
     }
 }
 
 function* watchLogin() {
-    yield takeLatest(LOGIN_REQUEST, login);
+    yield takeLatest(types.LOGIN_REQUEST, login);
 }
 
 function* watchLogout() {
-    yield takeLatest(LOGOUT_REQUEST, logout);
+    yield takeLatest(types.LOGOUT_REQUEST, logout);
 }
 
 export default function* rootSaga() {

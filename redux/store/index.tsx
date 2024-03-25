@@ -1,3 +1,5 @@
+'use client';
+
 import { createStore, applyMiddleware } from 'redux';
 import { createLogger } from 'redux-logger';
 import rootReducer from './index';
@@ -10,7 +12,7 @@ import { persistStore } from 'redux-persist';
 const logger = createLogger();
 const sagaMiddleware = createSagaMiddleware();
 
-export const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(sagaMiddleware)));
+export const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(sagaMiddleware, logger)));
 
 sagaMiddleware.run(rootSaga);
 
