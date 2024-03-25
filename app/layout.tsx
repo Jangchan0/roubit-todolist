@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import localFont from 'next/font/local';
+import { Provider } from 'react-redux';
+
+import { store, persistor } from '@/redux/store';
+import { PersistGate } from 'redux-persist/integration/react';
 
 const myFont = localFont({ src: '../public/fonts/Pretendard-Medium.woff2' });
 export const metadata: Metadata = {
@@ -15,7 +19,11 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={myFont.className}>{children}</body>
+            <Provider store={store}>
+                <PersistGate persistor={persistor}>
+                    <body className={myFont.className}>{children}</body>
+                </PersistGate>
+            </Provider>
         </html>
     );
 }

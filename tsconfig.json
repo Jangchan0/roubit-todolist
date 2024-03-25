@@ -27,7 +27,7 @@
         "**/*.tsx",
         ".next/types/**/*.ts",
         "app/test/index.test.js",
-        "until/produce.js"
+        "redux/until/produce.js"
     ],
     "exclude": ["node_modules"]
 }
