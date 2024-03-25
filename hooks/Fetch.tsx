@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 
-type MethodType = 'get' | 'put' | 'delete';
+type MethodType = 'get' | 'put' | 'delete' | 'post';
 
 const fetchData = (method: MethodType, address: string): Promise<AxiosResponse<any>> => {
     switch (method) {
@@ -10,6 +10,8 @@ const fetchData = (method: MethodType, address: string): Promise<AxiosResponse<a
             return axios.put(address);
         case 'delete':
             return axios.delete(address);
+        case 'post':
+            return axios.post(address);
         default:
             throw new Error(`Unsupported method: ${method}`);
     }

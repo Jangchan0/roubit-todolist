@@ -1,20 +1,13 @@
 import { takeLatest, call, put, all } from 'redux-saga/effects';
-import {
-    LOGIN_REQUEST,
-    LOGIN_SUCCESS,
-    LOGIN_FAILURE,
-    LOGOUT_REQUEST,
-    LOGOUT_SUCCESS,
-    LOGOUT_FAILURE,
-} from './constant';
+import { types } from './constant';
 import fetchData from '@/hooks/Fetch';
 
 function* login(action) {
     try {
         const response = yield call(fetchData, 'post', '/login', action.payload);
-        yield put({ type: LOGIN_SUCCESS, payload: response.data });
+        yield put({ type: types.LOGIN_SUCCESS, payload: response.data });
     } catch (error) {
-        yield put({ type: LOGIN_FAILURE, payload: error });
+        yield put({ type: types.LOGIN_FAILURE, payload: error });
     }
 }
 
