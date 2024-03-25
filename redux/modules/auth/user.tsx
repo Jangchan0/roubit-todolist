@@ -1,15 +1,24 @@
-'use client';
-
 import { all, takeLatest } from 'redux-saga/effects';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import taker from './taker';
-import { types } from './constant';
+import { types } from '../../constant';
 
 const login = function* (action) {
-    return yield axios.post('/user/login', action.payload);
+    try {
+        const response: AxiosResponse<any> = yield axios.post('/user/login', action.payload);
+        return response.data; // 응답 데이터 반환
+    } catch (error) {
+        throw error;
+    }
 };
+
 const logout = function* () {
-    return yield axios.post('/user/logout');
+    try {
+        const response: AxiosResponse<any> = yield axios.post('/user/logout');
+        return response.data; // 응답 데이터 반환
+    } catch (error) {
+        throw error;
+    }
 };
 
 export default function* userSaga() {

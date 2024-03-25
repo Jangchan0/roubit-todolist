@@ -1,2 +1,8 @@
 import { combineReducers } from 'redux';
-import createRoutinReducer from './todoList';
+import routinReducer from './todoList';
+
+const rootReducer = combineReducers({
+    routin: routinReducer,
+});
+
+export default rootReducer;

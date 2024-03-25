@@ -1,8 +1,6 @@
-'use client';
-
 import { createStore, applyMiddleware } from 'redux';
 import { createLogger } from 'redux-logger';
-import rootReducer from './index';
+import rootReducer from '../reducer/index';
 import rootSaga from '../modules/auth';
 import createSagaMiddleware from 'redux-saga';
 import { composeWithDevTools } from 'redux-devtools-extension';

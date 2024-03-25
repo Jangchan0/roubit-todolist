@@ -1,4 +1,4 @@
-import { types } from '../auth/constant';
+import { types } from '../../constant';
 
 export function loginRequest() {
     return {
