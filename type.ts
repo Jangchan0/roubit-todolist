@@ -1,15 +1,15 @@
 // 로그인
 
 interface Login {
-    email: string | number;
-    password: string | number;
+    email: string;
+    password: string;
 }
 
 interface signUp {
-    email: string | number;
+    email: string;
     fullName: string;
     Username: string;
-    password: string | number;
+    password: string;
 }
 
 interface TodoList {
