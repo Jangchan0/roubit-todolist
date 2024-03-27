@@ -1,19 +1,15 @@
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 
-type MethodType = 'get' | 'put' | 'delete' | 'post';
-
-const fetchData = (method: MethodType, address: string, data?: any): Promise<AxiosResponse<any>> => {
-    switch (method) {
-        case 'get':
-            return axios.get(address);
-        case 'put':
-            return axios.put(address, data);
-        case 'delete':
-            return axios.delete(address);
-        case 'post':
-            return axios.post(address, data);
-        default:
-            throw new Error(`Unsupported method: ${method}`);
+const fetchData = async (query: {}, variables?: {}) => {
+    try {
+        const { data } = await axios.post(process.env.NEXT_PUBLIC_GRAPHQL_DOMAIN as string, {
+            query,
+            variables,
+        });
+        return data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw new Error('Failed to fetch data');
     }
 };
 

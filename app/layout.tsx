@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import localFont from 'next/font/local';
-import ReduxProvider from '@/redux/Provider';
+import Providers from './Provider';
 
 const myFont = localFont({ src: '../public/fonts/Pretendard-Medium.woff2' });
 export const metadata: Metadata = {
@@ -17,7 +17,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={myFont.className}>
-                <ReduxProvider>{children}</ReduxProvider>
+                <Providers>{children} </Providers>
             </body>
         </html>
     );

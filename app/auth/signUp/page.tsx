@@ -4,24 +4,42 @@ import React from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import Input from '@/app/components/input';
 import Button from '@/app/components/button';
+import { SIGNUP_REQUEST } from '@/reducers/user';
+import { useDispatch } from 'react-redux';
+import { useRouter } from 'next/navigation';
 
 type SignUpInput = {
     email: string;
     password: string;
     fullName: string;
-    userName: string;
+    username: string;
+    [key: string]: string;
 };
 
 const SignUp = () => {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        watch,
-    } = useForm<SignUpInput>();
-    const onSubmit: SubmitHandler<SignUpInput> = (data: SignUpInput) => console.log(data);
+    const router = useRouter();
+    const dispatch = useDispatch();
 
-    const isInputValid = (field: keyof SignUpInput, value: string) => {
+    const { register, handleSubmit, watch } = useForm<SignUpInput>();
+    const onSubmit: SubmitHandler<SignUpInput> = async (data: SignUpInput) => {
+        try {
+            dispatch({ type: SIGNUP_REQUEST, data, router });
+        } catch (error) {
+            console.error('Error signing up:', error);
+            alert('다시 시도해주세요..!');
+        }
+    };
+
+    const initInput = (input: inputs) => {
+        const watchValue = watchedValues[input.field];
+        if (watchValue && watchValue.length > 0 && !isInputValid(input.field, watchValue)) {
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+    const isInputValid = (field: string, value: string) => {
         const input = inputs.find((input) => input.field === field);
         if (input && input.pattern) {
             return input.pattern.test(value);
@@ -35,7 +53,7 @@ const SignUp = () => {
         for (const field of Object.keys(watchedValues)) {
             const value = watchedValues[field];
             if (value === '') return false;
-            if (!isInputValid(field as keyof SignUpInput, value)) {
+            if (!isInputValid(field as string, value)) {
                 return false;
             }
         }
@@ -58,12 +76,12 @@ const SignUp = () => {
                                 <Input
                                     type={input.field !== 'password' ? 'text' : 'password'}
                                     placeholder={input.placeholder}
-                                    register={register(input.field as keyof SignUpInput, {
+                                    register={register(input.field as string, {
                                         required: true,
-                                        validate: (value) => isInputValid(input.field as keyof SignUpInput, value),
+                                        validate: (value) => isInputValid(input.field as string, value),
                                     })}
                                 />
-                                {errors[input.field] && <p className="text-red-500 text-xs">{input.err}</p>}
+                                {initInput(input) && <p className="text-red-500 text-xs">{input.err}</p>}
                             </div>
                         ))}
                         <Button
@@ -71,7 +89,7 @@ const SignUp = () => {
                             bgcolor={isFormValid() ? 'roubit-point-color' : 'gray-200'}
                             color={isFormValid() ? 'white' : 'gray-400'}
                             text="Sign up"
-                            disabled={isFormValid()}
+                            disabled={!isFormValid()}
                         />
                     </form>
                     <div />
@@ -82,6 +100,14 @@ const SignUp = () => {
 };
 
 export default SignUp;
+
+type inputs = {
+    field: string;
+    title: string;
+    placeholder: string;
+    pattern?: RegExp;
+    err: string;
+};
 
 const inputs = [
     {
@@ -96,12 +122,14 @@ const inputs = [
         placeholder: 'Please enter your Full name',
         err: 'Input your Fullname, please',
         field: 'fullName',
+        pattern: /^\S+$/,
     },
     {
         title: 'User Name',
         placeholder: '2-12 character user name',
         err: 'Input your Username Please',
-        field: 'userName',
+        field: 'username',
+        pattern: /^\S+$/,
     },
     {
         title: 'Password',
