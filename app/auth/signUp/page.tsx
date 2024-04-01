@@ -1,27 +1,30 @@
 'use client';
 
 import React from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import Input from '@/app/components/input';
 import Button from '@/app/components/button';
 import { SIGNUP_REQUEST } from '@/reducers/user';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
+import { signUpIdPattern, hasWhitespace, signUpPasswordPattern } from '@/constants';
 
 type SignUpInput = {
     email: string;
     password: string;
     fullName: string;
     username: string;
-    [key: string]: string;
 };
+type SignUpInputKeyType = keyof SignUpInput;
 
 const SignUp = () => {
     const router = useRouter();
     const dispatch = useDispatch();
 
     const { register, handleSubmit, watch } = useForm<SignUpInput>();
-    const onSubmit: SubmitHandler<SignUpInput> = async (data: SignUpInput) => {
+    const watchedValues = watch();
+
+    const onSubmit = (data: SignUpInput): void => {
         try {
             dispatch({ type: SIGNUP_REQUEST, data, router });
         } catch (error) {
@@ -30,16 +33,13 @@ const SignUp = () => {
         }
     };
 
-    const initInput = (input: inputs) => {
+    const checkInputValidity = (input: inputsType) => {
         const watchValue = watchedValues[input.field];
-        if (watchValue && watchValue.length > 0 && !isInputValid(input.field, watchValue)) {
-            return true;
-        } else {
-            return false;
-        }
+        const isValid = watchValue && watchValue.length > 0 && !checkInputPatternCompliance(input.field, watchValue);
+        return isValid;
     };
 
-    const isInputValid = (field: string, value: string) => {
+    const checkInputPatternCompliance = (field: SignUpInputKeyType, value: string) => {
         const input = inputs.find((input) => input.field === field);
         if (input && input.pattern) {
             return input.pattern.test(value);
@@ -47,13 +47,12 @@ const SignUp = () => {
         return true;
     };
 
-    const watchedValues = watch();
-
     const isFormValid = (): boolean => {
-        for (const field of Object.keys(watchedValues)) {
+        for (const _field of Object.keys(watchedValues)) {
+            const field = _field as keyof SignUpInput;
             const value = watchedValues[field];
             if (value === '') return false;
-            if (!isInputValid(field as string, value)) {
+            if (!checkInputPatternCompliance(field, value)) {
                 return false;
             }
         }
@@ -76,12 +75,13 @@ const SignUp = () => {
                                 <Input
                                     type={input.field !== 'password' ? 'text' : 'password'}
                                     placeholder={input.placeholder}
-                                    register={register(input.field as string, {
+                                    register={register(input.field as SignUpInputKeyType, {
                                         required: true,
-                                        validate: (value) => isInputValid(input.field as string, value),
+                                        validate: (value) =>
+                                            checkInputPatternCompliance(input.field as SignUpInputKeyType, value),
                                     })}
                                 />
-                                {initInput(input) && <p className="text-red-500 text-xs">{input.err}</p>}
+                                {checkInputValidity(input) && <p className="text-red-500 text-xs">{input.err}</p>}
                             </div>
                         ))}
                         <Button
@@ -101,41 +101,41 @@ const SignUp = () => {
 
 export default SignUp;
 
-type inputs = {
-    field: string;
+type inputsType = {
+    field: SignUpInputKeyType;
     title: string;
     placeholder: string;
     pattern?: RegExp;
     err: string;
 };
 
-const inputs = [
+const inputs: inputsType[] = [
     {
         title: 'Phone number or Email',
         placeholder: 'Please enter your phone number or Email',
         field: 'email',
         err: 'Please enter your phone number or Email',
-        pattern: /^(?:\d{3}-?\d{3,4}-?\d{4}|\w+@\w+\.\w{2,3})$/,
+        pattern: signUpIdPattern,
     },
     {
         title: 'Full Name',
         placeholder: 'Please enter your Full name',
         err: 'Input your Fullname, please',
         field: 'fullName',
-        pattern: /^\S+$/,
+        pattern: hasWhitespace,
     },
     {
         title: 'User Name',
         placeholder: '2-12 character user name',
         err: 'Input your Username Please',
         field: 'username',
-        pattern: /^\S+$/,
+        pattern: hasWhitespace,
     },
     {
         title: 'Password',
         placeholder: '8-12 character password',
         field: 'password',
         err: 'includes 8 to 12 uppercase letters and special characters.',
-        pattern: /^(?=.*[A-Z])(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{6,12}$/,
+        pattern: signUpPasswordPattern,
     },
 ];

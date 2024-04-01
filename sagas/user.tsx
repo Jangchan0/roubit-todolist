@@ -1,55 +1,17 @@
 import { all, fork, put, takeLatest, call } from 'redux-saga/effects';
+import { SagaResponseType } from '@/app/types/common';
 import {
     LOGIN_REQUEST,
     LOGIN_SUCCESS,
     LOGIN_FAILURE,
-    LOGOUT_REQUEST,
-    LOGOUT_SUCCESS,
-    LOGOUT_FAILURE,
     SIGNUP_REQUEST,
     SIGNUP_SUCCESS,
     SIGNUP_FAILURE,
 } from '../reducers/user';
 import { NextRouter } from 'next/router';
 
-import signUpMutation from '@/hooks/signUpMutation';
-import signInMutation from '@/hooks/loginMutation';
-
-type loginInput = {
-    email: string;
-    password: string;
-};
-
-type loginActionArgumentsTypes = {
-    data: loginInput;
-    router: NextRouter;
-    type: string;
-};
-
-function* login(action: loginActionArgumentsTypes) {
-    try {
-        const result = yield call(signInMutation, action.data);
-        if (result.signIn.status === 200) {
-            yield put({ type: LOGIN_SUCCESS });
-            localStorage.setItem('todoAccressToken', result.signIn.data.accessToken);
-            yield call(action.router.push, '/todos');
-        } else {
-            alert(result.signIn.message);
-            throw new Error(result.signIn.message);
-        }
-    } catch (err) {
-        yield put({ type: LOGIN_FAILURE, payload: err });
-    }
-}
-
-// function* logout(action) {
-//     try {
-//         const result = yield call(signUp, action.data);
-//         yield put({ type: LOGOUT_SUCCESS });
-//     } catch (err) {
-//         yield put({ type: LOGOUT_FAILURE, payload: err });
-//     }
-// })
+import signUpMutation, { ReturnSignUpResponseType, SignUpResponse } from '@/graphQLMutation/signUpMutation';
+import signInMutation, { ReturnAccessTokenType, SignInResponse } from '@/graphQLMutation/loginMutation';
 
 type SignUpInput = {
     email: string;
@@ -64,16 +26,44 @@ type signUpActionArgumentsTypes = {
     type: string;
 };
 
-function* signUp(action: signUpActionArgumentsTypes) {
+type loginInput = Pick<SignUpInput, 'email' | 'password'>;
+
+type loginActionArgumentsTypes = {
+    data: loginInput;
+    router: NextRouter;
+    type: string;
+};
+
+function* login(
+    action: loginActionArgumentsTypes
+): SagaResponseType<SignInResponse<ReturnAccessTokenType>, { type: string; payload?: unknown }> {
+    try {
+        const result = yield call(signInMutation, action.data);
+        if (result.signIn.status === 200) {
+            yield put({ type: LOGIN_SUCCESS });
+            localStorage.setItem('todoAccessToken', result.signIn.data.accessToken);
+            yield call(action.router.push, '/');
+        } else {
+            alert(result.signIn.message);
+            throw new Error(result.signIn.message);
+        }
+    } catch (err: unknown) {
+        yield put({ type: LOGIN_FAILURE });
+    }
+}
+
+function* signUp(
+    action: signUpActionArgumentsTypes
+): SagaResponseType<SignUpResponse<ReturnSignUpResponseType>, { type: string; payload?: unknown }> {
     try {
         const result = yield call(signUpMutation, action.data);
-        if (result.signUp.status === 200) {
+        if (result.signUp.data && result.signUp.data.email === action.data.email) {
             yield put({ type: SIGNUP_SUCCESS });
             alert('회원가입을 축하합니다! 같이 더욱 부지런해져봐요!');
             yield call(action.router.push, '/auth/signIn');
         } else {
             alert(result.signUp.message);
-            throw new Error();
+            throw new Error(result.signUp.message);
         }
     } catch (err) {
         yield put({ type: SIGNUP_FAILURE, payload: err });

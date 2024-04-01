@@ -14,7 +14,7 @@ const Button: React.FC<ButtonProps> = ({ type, bgcolor, color, text, disabled, o
         <button
             type={type}
             className={`bg-${bgcolor} text-${color}
-             py-2 px-4 rounded-xl border-2 h-[49px] bg-gray w-[400px] shadow-sm cursor-pointer `}
+             py-2 px-4 rounded-xl border-2 h-[49px] bg-gray w-[273px] shadow-sm cursor-pointer `}
             disabled={disabled}
             onClick={onClick}
         >

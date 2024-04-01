@@ -1,4 +1,5 @@
-import fetchData from './fetch';
+import { AxiosResponseType } from '@/app/types/common';
+import fetchData from '../sagas/Axios/fetch';
 
 const loginMutationQuery = `
 mutation signIn($loginInput: LoginInput!) {
@@ -17,7 +18,13 @@ interface login {
     password: string;
 }
 
-const signInMutation = async (userInput: login) => {
+export type ReturnAccessTokenType = {
+    accessToken: string;
+};
+
+export type SignInResponse<T extends ReturnAccessTokenType> = { signIn: AxiosResponseType<T> };
+
+const signInMutation = async (userInput: login): Promise<SignInResponse<ReturnAccessTokenType>> => {
     try {
         const { data } = await fetchData(loginMutationQuery, { loginInput: userInput });
         return data;

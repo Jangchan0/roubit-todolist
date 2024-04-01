@@ -3,7 +3,7 @@
 import Button from '@/app/components/button';
 import RoubitLogo from '@/public/logo_splash.png';
 import Image from 'next/image';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import Input from '@/app/components/input';
 import { LOGIN_REQUEST } from '@/reducers/user';
 import { useDispatch } from 'react-redux';
@@ -19,7 +19,7 @@ const Login = () => {
     const router = useRouter();
 
     const { register, handleSubmit } = useForm<UserAuth>();
-    const onSubmit: SubmitHandler<UserAuth> = (data: UserAuth) => {
+    const onSubmit = (data: UserAuth): void => {
         try {
             dispatch({ type: LOGIN_REQUEST, data, router });
         } catch (error) {

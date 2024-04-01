@@ -1,4 +1,5 @@
-import fetchData from './fetch';
+import { AxiosResponseType } from '@/app/types/common';
+import fetchData from '../sagas/Axios/fetch';
 
 const signUpMutationQuery = `
 mutation signUp($createUserInput: CreateUserInput!) {
@@ -15,14 +16,24 @@ mutation signUp($createUserInput: CreateUserInput!) {
 }
 `;
 
-interface UserInfo {
+type UserInfo = {
     email: string;
     fullName: string;
     username: string;
     password: string;
-}
+};
 
-const signUpMutation = async (userInfo: UserInfo) => {
+export type ReturnSignUpResponseType = {
+    id: string;
+    email: string;
+    fullName: string;
+    username: string;
+    password: string;
+};
+
+export type SignUpResponse<T extends ReturnSignUpResponseType> = { signUp: AxiosResponseType<T> };
+
+const signUpMutation = async (userInfo: UserInfo): Promise<SignUpResponse<ReturnSignUpResponseType>> => {
     try {
         const { data } = await fetchData(signUpMutationQuery, {
             createUserInput: userInfo,
