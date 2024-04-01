@@ -1,16 +1,18 @@
 import { combineReducers } from 'redux';
 import { HYDRATE } from 'next-redux-wrapper';
+import { TodoInitialStateType } from './todo';
+import { UserInitalState } from './user';
 
 import user from './user';
-import routin from './routin';
+import todo from './todo';
 
 interface RootReducerCombinedStateType {
-    user: {};
-    routin: {};
+    user: UserInitalState;
+    todo: TodoInitialStateType;
 }
 interface RootReducerActionType {
     type: string;
-    payload: {};
+    payload: UserInitalState;
 }
 
 const rootReducer = (state: RootReducerCombinedStateType, action: RootReducerActionType) => {
@@ -20,13 +22,13 @@ const rootReducer = (state: RootReducerCombinedStateType, action: RootReducerAct
         default: {
             const combineReducer = combineReducers({
                 user,
-                routin,
+                todo,
             });
             return combineReducer(state, action);
         }
     }
 };
 
-export type RootState = ReturnType<typeof rootReducer>;
+export type RootState = RootReducerCombinedStateType;
 
 export default rootReducer;
