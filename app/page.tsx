@@ -13,6 +13,8 @@ import todoBtn from '@/public/button.png';
 import progress from '@/public/progress.png';
 import progressBg from '@/public/progressBg.png';
 import ModifyTodoModal from './components/modifyTodo';
+import { useMutation } from '@tanstack/react-query';
+import createTodoMutation from '@/graphQLMutation/createTodoMutation';
 
 type titleInput = {
     title: string;
@@ -41,9 +43,13 @@ export default function Home() {
         dispatch({ type: GET_TODO_REQUEST });
     }, [dispatch, router]);
 
+    const mutation = useMutation({
+        mutationFn: createTodoMutation,
+    });
+
     const onSubmit: SubmitHandler<titleInput> = (data: titleInput) => {
         try {
-            data.title.length > 0 ? dispatch({ type: CREATE_TODO_REQUEST, data }) : alert('할 일을 작성해주세요!');
+            data.title.length > 0 ? mutation.mutate(data) : alert('할 일을 작성해주세요!');
             reset();
         } catch (err) {
             alert(err);
@@ -66,7 +72,7 @@ export default function Home() {
 
     return (
         <>
-            <div className="flex justify-center items-center h-full py-20">
+            <div className="flex justify-center items-center h-screen ">
                 <ModifyTodoModal />
                 <main>
                     <h2 className="font-black text-3xl mb-8">To-Do List</h2>
@@ -76,12 +82,13 @@ export default function Home() {
                             <Image src={todoBtn} alt="일정 추가" width={42} height={42} />
                         </button>
                     </form>
-                    <div className="grid grid-cols-1 ">
-                        {todoList?.map((item: todoList) => (
-                            <div key={item.id} className="border-b border-gray-20 last:border-none py-5">
-                                <TodoItem todoInfo={item} />
-                            </div>
-                        ))}
+                    <div className="grid grid-cols-1 min-h-80 overflow-scroll">
+                        {todoList &&
+                            todoList.map((item: todoList) => (
+                                <div key={item.id} className="border-b border-gray-20 last:border-none py-5">
+                                    <TodoItem todoInfo={item} />
+                                </div>
+                            ))}
                     </div>
                     <div className="flex flex-col items-center justify-end mt-[100px]">
                         <p className="text-roubit-point-color text-sm">{filterTakesComplete()}</p>
