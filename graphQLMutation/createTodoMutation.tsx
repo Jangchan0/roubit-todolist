@@ -1,18 +1,20 @@
 import { AxiosResponseType, TaskType } from '@/app/types/common';
-import fetchData from '../sagas/Axios/fetch';
+import request, { gql } from 'graphql-request';
 
-const createTodoMutationQuery = `
-mutation createTodoList($createTodoListInput: CreateTodoListInput!) {
-  createTodoList(createTodoListInput: $createTodoListInput) {
-    status
-    data {
-      todolist {
-        title
-      }
+const createTodoMutationQuery = gql`
+    mutation createTodoList($createTodoListInput: CreateTodoListInput!) {
+        createTodoList(createTodoListInput: $createTodoListInput) {
+            status
+            data {
+                todolist {
+                    id
+                    title
+                    completed
+                }
+            }
+            message
+        }
     }
-    message
-  }
-}
 `;
 
 type CreateTodoListInput = {
@@ -23,10 +25,16 @@ export type CreateTaskResponse<T extends TaskType> = { createTodoList: AxiosResp
 
 const createTodoMutation = async (createTodoTitle: CreateTodoListInput): Promise<CreateTaskResponse<TaskType>> => {
     try {
-        const { data } = await fetchData(createTodoMutationQuery, { createTodoListInput: createTodoTitle });
-        return data;
+        const variables = {
+            createTodoListInput: createTodoTitle,
+        };
+        const response = await request<CreateTaskResponse<TaskType>>(
+            'http://localhost:8080/graphql',
+            createTodoMutationQuery,
+            variables
+        );
+        return response;
     } catch (error) {
-        console.error('Error creating todo list:', error);
         throw new Error('Failed to create todo list');
     }
 };

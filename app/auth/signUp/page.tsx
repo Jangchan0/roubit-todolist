@@ -4,10 +4,9 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import Input from '@/app/components/input';
 import Button from '@/app/components/button';
-import { SIGNUP_REQUEST } from '@/reducers/user';
-import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import { signUpIdPattern, hasWhitespace, signUpPasswordPattern } from '@/constants';
+import { useSignUpHandler } from '@/hooks/useSignUpHandler';
 
 type SignUpInput = {
     email: string;
@@ -15,18 +14,27 @@ type SignUpInput = {
     fullName: string;
     username: string;
 };
+
 type SignUpInputKeyType = keyof SignUpInput;
 
 const SignUp = () => {
     const router = useRouter();
-    const dispatch = useDispatch();
 
     const { register, handleSubmit, watch } = useForm<SignUpInput>();
     const watchedValues = watch();
 
-    const onSubmit = (data: SignUpInput): void => {
+    const { signUp, isPending } = useSignUpHandler();
+
+    const onSubmit = async (data: SignUpInput) => {
         try {
-            dispatch({ type: SIGNUP_REQUEST, data, router });
+            const response = await signUp(data);
+            const isVaild = response.signUp.data && response.signUp.data.email === data.email;
+            if (isVaild) {
+                alert('환영합니다! 함께 더욱 부지런해져봐요!');
+                router.push('/auth/signIn');
+            } else {
+                alert(response.signUp.message);
+            }
         } catch (error) {
             console.error('Error signing up:', error);
             alert('다시 시도해주세요..!');
@@ -88,8 +96,8 @@ const SignUp = () => {
                             type="submit"
                             bgcolor={isFormValid() ? 'roubit-point-color' : 'gray-200'}
                             color={isFormValid() ? 'white' : 'gray-400'}
-                            text="Sign up"
-                            disabled={!isFormValid()}
+                            text={isPending ? 'Signing Up...' : 'Sign Up'}
+                            disabled={!isFormValid() || isPending}
                         />
                     </form>
                     <div />

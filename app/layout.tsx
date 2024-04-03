@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import localFont from 'next/font/local';
-import Providers from './Provider';
+import Providers from '../reactQuery/Provider';
 
 const myFont = localFont({ src: '../public/fonts/Pretendard-Medium.woff2' });
 export const metadata: Metadata = {

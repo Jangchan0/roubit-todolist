@@ -17,4 +17,10 @@ export type TaskType = {
     completed: boolean;
 };
 
+export type RejectType = {
+    status: number;
+    data: null;
+    message: string;
+};
+
 export type SagaResponseType<T, Y extends Action> = Generator<CallEffect<T | boolean> | PutEffect<Y>, void, T>;
