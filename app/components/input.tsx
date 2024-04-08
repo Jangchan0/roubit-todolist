@@ -1,5 +1,3 @@
-import React from 'react';
-
 type ButtonType = 'text' | 'password';
 
 interface InputProps {
@@ -9,7 +7,7 @@ interface InputProps {
     value?: string;
 }
 
-const Input: React.FC<InputProps> = ({ type, placeholder, register, value }) => {
+export const Input: React.FC<InputProps> = ({ type, placeholder, register, value }) => {
     return (
         <input
             type={type}
@@ -21,5 +19,3 @@ const Input: React.FC<InputProps> = ({ type, placeholder, register, value }) => 
         />
     );
 };
-
-export default Input;

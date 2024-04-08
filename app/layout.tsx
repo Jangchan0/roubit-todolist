@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import localFont from 'next/font/local';
-import Providers from '../reactQuery/Provider';
+import Providers from '../reactQuery/Providers';
 
 const myFont = localFont({ src: '../public/fonts/Pretendard-Medium.woff2' });
 export const metadata: Metadata = {
@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={myFont.className}>
+            <body className={`${myFont.className} flex justify-center items-center h-screen`}>
                 <Providers>{children} </Providers>
             </body>
         </html>
