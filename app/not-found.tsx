@@ -2,7 +2,7 @@
 
 import errorPageBg from '@/public/error.jpg';
 import Image from 'next/image';
-import Button from './components/button';
+import { Button } from './components/Button';
 import { useRouter } from 'next/navigation';
 
 const Error = () => {

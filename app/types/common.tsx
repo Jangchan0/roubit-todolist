@@ -23,4 +23,12 @@ export type RejectType = {
     message: string;
 };
 
+export type DefaultResponseType = {
+    todolist: {
+        data: {
+            todolist: TaskType[];
+        };
+    };
+};
+
 export type SagaResponseType<T, Y extends Action> = Generator<CallEffect<T | boolean> | PutEffect<Y>, void, T>;

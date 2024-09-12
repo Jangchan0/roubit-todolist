@@ -2,8 +2,10 @@ import completedChecker from '@/public/trash-2.png';
 import checkbox from '@/public/Checkbox.png';
 import checkedBox from '@/public/Checkbox2.png';
 import Image from 'next/image';
-import { useDispatch } from 'react-redux';
-import { COMPLETED_TODO_REQUEST, DELETE_TODO_REQUEST } from '@/reducers/todo';
+import { useDeleteTodoHandler } from '@/hooks/todoList/useDeleteTodoHandler';
+import { useCompletedTodoHandler } from '@/hooks/todoList/useCompletedTodoHandler';
+import { useModalStore } from '@/store/useModalStore';
+import { useShallow } from 'zustand/react/shallow';
 
 type todoList = {
     id: string;
@@ -13,9 +15,8 @@ type todoList = {
 
 type completedTaskArgumentsType = Omit<todoList, 'title'>;
 type deletedTaskArgumentsType = Pick<todoList, 'id'>;
-type updateTaskArgumentsType = Omit<todoList, 'completed'>;
 
-const TodoItem = ({ todoInfo }: { todoInfo: todoList }) => {
+export const TodoItem = ({ todoInfo }: { todoInfo: todoList }) => {
     const completedTaskArguments: completedTaskArgumentsType = {
         id: todoInfo.id,
         completed: !todoInfo.completed,
@@ -23,27 +24,32 @@ const TodoItem = ({ todoInfo }: { todoInfo: todoList }) => {
     const deletedTaskArguments: deletedTaskArgumentsType = {
         id: todoInfo.id,
     };
-    const updateTaskArguments: updateTaskArgumentsType = {
-        id: todoInfo.id,
-        title: todoInfo.title,
-    };
 
-    const dispatch = useDispatch();
+    const { deletedTodo } = useDeleteTodoHandler();
+    const { completeTodo } = useCompletedTodoHandler();
+    const { setUpdateTaskId, setModal, updateTaskId } = useModalStore(
+        useShallow((state) => ({
+            setModal: state.setModal,
+            setUpdateTaskId: state.setUpdateTaskId,
+            updateTaskId: state.updateTaskId,
+        }))
+    );
+
     const item = todoInfo;
 
     const completedTask: React.MouseEventHandler<HTMLImageElement> = () => {
-        dispatch({ type: COMPLETED_TODO_REQUEST, data: completedTaskArguments });
+        completeTodo(completedTaskArguments);
     };
     const deletedTask: React.MouseEventHandler<HTMLImageElement> = () => {
-        dispatch({ type: DELETE_TODO_REQUEST, data: deletedTaskArguments });
+        deletedTodo(deletedTaskArguments);
     };
-
     const openModal = () => {
-        dispatch({ type: 'OPEN_MODAL', payload: updateTaskArguments });
+        setModal(true);
+        setUpdateTaskId((updateTaskId.id = todoInfo.id), (updateTaskId.title = todoInfo.title));
     };
 
     return (
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center border-b border-gray-20 last:border-none h-16">
             <div className="flex gap-x-[10px]">
                 <Image
                     src={item.completed ? checkedBox : checkbox}
@@ -75,5 +81,3 @@ const TodoItem = ({ todoInfo }: { todoInfo: todoList }) => {
         </div>
     );
 };
-
-export default TodoItem;

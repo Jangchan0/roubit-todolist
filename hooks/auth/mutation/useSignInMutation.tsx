@@ -1,7 +1,8 @@
 import { AxiosResponseType, RejectType } from '@/app/types/common';
 import { gql } from 'graphql-request';
-import { getGraphQLClient } from '@/reactQuery/graphQLClient';
+import { getGraphQLClient } from '@/reactQuery/getGraphQLClient';
 import { useMutation } from '@tanstack/react-query';
+import { useCallback } from 'react';
 
 interface login {
     email: string;
@@ -26,8 +27,8 @@ type SignInRejectType = {
 
 export type SignInResponse<T extends ReturnAccessTokenType> = { signIn: AxiosResponseType<T> };
 
-const useSignInMutataion = () => {
-    const signIn = async (userInput: login): Promise<SignInResponseType | SignInRejectType> => {
+export const useSignInMutation = () => {
+    const signIn = useCallback(async (userInput: login): Promise<SignInResponseType | SignInRejectType> => {
         const loginMutationQuery = gql`
             mutation signIn($loginInput: LoginInput!) {
                 signIn(loginInput: $loginInput) {
@@ -48,7 +49,7 @@ const useSignInMutataion = () => {
             }
         );
         return response;
-    };
+    }, []);
 
     const { mutateAsync, isPending } = useMutation({
         mutationFn: signIn,
@@ -59,5 +60,3 @@ const useSignInMutataion = () => {
         isPending,
     };
 };
-
-export default useSignInMutataion;
